@@ -1,0 +1,10 @@
+**__pycache__
+.vscode
+.DS_Store
+
+
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+README.md
+
+.checkpoints/
