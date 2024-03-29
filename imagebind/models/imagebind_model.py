@@ -491,7 +491,7 @@ class ImageBindModel(nn.Module):
                     print(f"Trunk 적용 후 {modality_key} 차원: {modality_value.shape}")
                 
             
-                # 여기 거치기 전, local patch에 해당하는 부분 확인
+                # 여기 거치기 전, local patch에 해당하는 부분 가져오기
                 ### heads 처리 후
                 modality_value = self.modality_heads[modality_key](
                     modality_value, **head_inputs
@@ -502,7 +502,8 @@ class ImageBindModel(nn.Module):
                 modality_value = self.modality_postprocessors[modality_key](
                     modality_value
                 )
-                print(f'{modality_key.capitalize()} embedding shape, heads, postprocessors 거친 후 : {modality_value.shape}')
+                if modality_key == ModalityType.AUDIO:
+                    print(f"Postprocess 적용 후 {modality_key} 차원: {modality_value.shape}")
                 print('--------------------------------------------------------------------------------------')
                 
                 
