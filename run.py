@@ -3,13 +3,16 @@ import torch
 from imagebind.models import imagebind_model
 from imagebind.models.imagebind_model import ModalityType
 
+# 5개 확인 
+
 text_list=["A dog.", "A car", "A bird"]
 image_paths=[".assets/dog_image.jpg", ".assets/car_image.jpg", ".assets/bird_image.jpg"]
 audio_paths=[".assets/dog_audio.wav", ".assets/car_audio.wav", ".assets/bird_audio.wav"]
 
-# text_list=["A dog."]
-# image_paths=[".assets/dog_image.jpg"]
-# audio_paths=[".assets/dog_audio.wav"]
+# text_list=["dog growling", "male singing", "people babbling", "police car (siren)", "yodelling"]
+# image_paths=["./modalities/dog growling.png", "./modalities/male singing.png", "./modalities/people babbling.png", "./modalities/police car (siren).png", "./modalities/yodelling.png"]
+# audio_paths=["./modalities/dog growling_32720.wav", "./modalities/male singing_27393.wav", "./modalities/people babbling_88641.wav", "./modalities/police car (siren)_95560.wav", "./modalities/yodelling_124652.wav"]
+
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -28,18 +31,34 @@ inputs = {
 with torch.no_grad():
     embeddings = model(inputs)
 
-print(
-    "Vision x Text: ",
-    torch.softmax(embeddings[ModalityType.VISION] @ embeddings[ModalityType.TEXT].T, dim=-1),
-)
-print(
-    "Audio x Text: ",
-    torch.softmax(embeddings[ModalityType.AUDIO] @ embeddings[ModalityType.TEXT].T, dim=-1),
-)
-print(
-    "Vision x Audio: ",
-    torch.softmax(embeddings[ModalityType.VISION] @ embeddings[ModalityType.AUDIO].T, dim=-1),
-)
+
+# similarity
+vt_sim = embeddings[ModalityType.VISION] @ embeddings[ModalityType.TEXT].T
+at_sim = embeddings[ModalityType.AUDIO] @ embeddings[ModalityType.TEXT].T
+va_sim = embeddings[ModalityType.VISION] @ embeddings[ModalityType.AUDIO].T
+
+
+# dot product에 softmax를 한 결과
+vt_soft = torch.softmax(embeddings[ModalityType.VISION] @ embeddings[ModalityType.TEXT].T, dim=-1)
+at_soft = torch.softmax(embeddings[ModalityType.AUDIO] @ embeddings[ModalityType.TEXT].T, dim=-1)
+va_soft = torch.softmax(embeddings[ModalityType.VISION] @ embeddings[ModalityType.AUDIO].T, dim=-1)
+
+
+print("Vision x Text similarity: ")
+print(vt_sim)
+print("Audio x Text similarity: ")
+print(at_sim)
+print("Vision x Audio similarity:")
+print(va_sim)
+
+
+
+# print("Vision x Text: ")
+# print(vt_soft)
+# print("Audio x Text: ")
+# print(at_soft)
+# print("Vision x Audio:")
+# print(va_soft)
 
 # Expected output:
 #
